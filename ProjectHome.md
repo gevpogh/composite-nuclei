@@ -1,0 +1,3 @@
+Parallelisation of the code used to study the characteristics of the composite nuclei that are formed as cluster of different number of neutrons and protons. The range of temperature and densities at which the characteristics of composite nuclei considered helps to study the nature of different isotopes of atoms at different conditions, e.g their stability. The extremely dense matter at high temperatures is medium where the formation and dissolution of composite nuclei could be considered and based on which an Equation of State could be defined used as an essential ingredient in astrophysical model simulations.
+
+This EoS determines the dynamical evolution of core-collapse supernovae, the static properties of neutron stars, and the conditions for nucleosynthesis.
