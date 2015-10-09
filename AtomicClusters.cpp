@@ -11,12 +11,13 @@ Main_class::~Main_class()
 
 void poke_pe() //poke progress engine in order to complete pending requests
 {
+#ifdef POKE_P_E
     int flag;
     MPI_Iprobe(MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &flag, MPI_STATUS_IGNORE);
-    local_log_file = fopen(local_log,"a");
-    fprintf( local_log_file, "[%f]...POKE ...\n", MPI_Wtime()-gt000);
-    fclose(local_log_file);
-
+    //local_log_file = fopen(local_log,"a");
+    //fprintf( local_log_file, "[%f]...POKE ...\n", MPI_Wtime()-gt000);
+    //fclose(local_log_file);
+#endif
 }
 
 int read_element_top(MPI_Win win_q, MPI_Win win_offs, int * element, int target_mpitask_id, int num_tries) // queue_del
@@ -271,12 +272,12 @@ int main(int argc, char * argv[])
     MPI_Comm_size(MPI_COMM_WORLD, &num_proc);
 
     /* echo some info data */
-    sprintf(local_log, "local-log-%06d", rank);
+    //sprintf(local_log, "local-log-%06d", rank);
     gt000 = MPI_Wtime();
 
-    local_log_file = fopen(local_log,"a");
-    fprintf( local_log_file, "[%f] START COMPUTATION \n\n", MPI_Wtime()-gt000);
-    fclose(local_log_file);
+    //local_log_file = fopen(local_log,"a");
+    //fprintf( local_log_file, "[%f] START COMPUTATION \n\n", MPI_Wtime()-gt000);
+    //fclose(local_log_file);
 
 
     stime=MPI_Wtime();
@@ -11980,7 +11981,6 @@ std::vector <double> Worker::worker(int mpitask_id, int NMZ_MIN, int NMZ_MAX, in
             job[2] = T ;
             job[1] = NB ;
             job[0] = NMZ ;
-            //fprintf( local_log_file, "(%d,%d,%d,%d)\n",NMZ,NB,T,A_0);
 
             i++;
 
@@ -12002,9 +12002,9 @@ std::vector <double> Worker::worker(int mpitask_id, int NMZ_MIN, int NMZ_MAX, in
 
             if(empty == 0)
             {
-                local_log_file = fopen(local_log,"a");
-                fprintf( local_log_file, "[%f] ... doing own job ... \n", MPI_Wtime()-gt000);
-                fclose(local_log_file);
+                //local_log_file = fopen(local_log,"a");
+                //fprintf( local_log_file, "[%f] ... doing own job ... \n", MPI_Wtime()-gt000);
+                //fclose(local_log_file);
 
                 T = my_queue_element[2];
                 NB = my_queue_element[1];
@@ -12019,9 +12019,9 @@ std::vector <double> Worker::worker(int mpitask_id, int NMZ_MIN, int NMZ_MAX, in
 
                 counter++;
 
-                local_log_file = fopen(local_log,"a");
-                fprintf( local_log_file, "[%f] ... done ... \n\n", MPI_Wtime()-gt000);
-                fclose(local_log_file);
+                //local_log_file = fopen(local_log,"a");
+                //fprintf( local_log_file, "[%f] ... done ... \n\n", MPI_Wtime()-gt000);
+                //fclose(local_log_file);
             }
         }
         work_own_q_time += (MPI_Wtime() - work_own_q_stime);
@@ -12054,9 +12054,9 @@ std::vector <double> Worker::worker(int mpitask_id, int NMZ_MIN, int NMZ_MAX, in
 
             if(target_rank!=rank)
             {
-                local_log_file = fopen(local_log,"a");
-                fprintf( local_log_file, "[%f] ... try to steal from %d... \n", MPI_Wtime()-gt000, target_rank);
-                fclose(local_log_file);
+                //local_log_file = fopen(local_log,"a");
+                //fprintf( local_log_file, "[%f] ... try to steal from %d... \n", MPI_Wtime()-gt000, target_rank);
+                //fclose(local_log_file);
 
                 int status = read_element_top(win_q, win_offs, my_queue_element, target_rank, 5);
 
@@ -12066,9 +12066,9 @@ std::vector <double> Worker::worker(int mpitask_id, int NMZ_MIN, int NMZ_MAX, in
                     if(empty == 0)
                     {
                         //work cycle
-                        local_log_file = fopen(local_log,"a");
-                        fprintf( local_log_file, "[%f] ... doing stolen job from %d... \n", MPI_Wtime()-gt000, target_rank);
-                        fclose(local_log_file);
+                        //local_log_file = fopen(local_log,"a");
+                        //fprintf( local_log_file, "[%f] ... doing stolen job from %d... \n", MPI_Wtime()-gt000, target_rank);
+                        //fclose(local_log_file);
 
                         T = my_queue_element[2];
                         NB = my_queue_element[1];
@@ -12082,23 +12082,23 @@ std::vector <double> Worker::worker(int mpitask_id, int NMZ_MIN, int NMZ_MAX, in
                         mapping[A_0] += worked_for;
 
                         counter++;
-                        local_log_file = fopen(local_log,"a");
-                        fprintf( local_log_file, "[%f] ... done ... \n\n", MPI_Wtime()-gt000);
-                        fclose(local_log_file);
+                        //local_log_file = fopen(local_log,"a");
+                        //fprintf( local_log_file, "[%f] ... done ... \n\n", MPI_Wtime()-gt000);
+                        //fclose(local_log_file);
 
                     }// not empty - got val!
                     else
                     {
-                        local_log_file = fopen(local_log,"a");
-                        fprintf( local_log_file, "[%f] ... empty ... \n\n", MPI_Wtime()-gt000);
-                        fclose(local_log_file);
+                        //local_log_file = fopen(local_log,"a");
+                        //fprintf( local_log_file, "[%f] ... empty ... \n\n", MPI_Wtime()-gt000);
+                        //fclose(local_log_file);
                     }
                 }//unlocked
                 else
                 {
-                    local_log_file = fopen(local_log,"a");
-                    fprintf( local_log_file, "[%f] ... locked ... \n\n", MPI_Wtime()-gt000);
-                    fclose(local_log_file);
+                    //local_log_file = fopen(local_log,"a");
+                    //fprintf( local_log_file, "[%f] ... locked ... \n\n", MPI_Wtime()-gt000);
+                    //fclose(local_log_file);
                 }
 
                 if(empty==1) target_rank = ((target_rank+1)>=num_proc)?0:(target_rank+1);
