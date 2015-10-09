@@ -40,7 +40,7 @@ int read_element_top(MPI_Win win_q, MPI_Win win_offs, int * element, int target_
         MPI_Get( &my_offset, 1, MPI_INT, target_mpitask_id, 0, 1, MPI_INT, win_offs );
         MPI_Put( &lock, 1, MPI_INT, target_mpitask_id, 0, 1, MPI_INT, win_offs ); //implicitly block OFFSET win on proc <mpitask_id> (block code -2)
         MPI_Win_unlock( target_mpitask_id, win_offs );
-        wait_for_access += MPI_Wtime() - t0;
+        //wait_for_access += MPI_Wtime() - t0;
 
         if(my_offset >= -1) //if the window was not locked before
         {
@@ -66,14 +66,14 @@ int read_element_top(MPI_Win win_q, MPI_Win win_offs, int * element, int target_
         MPI_Get( element, 4, MPI_INT, target_mpitask_id, my_offset, 4, MPI_INT, win_q ); //get the last value from queue
         //MPI_Put( zero_val, 4, MPI_INT, target_mpitask_id, my_offset, 4, MPI_INT, win_q ); // put zero instead
         MPI_Win_unlock( target_mpitask_id, win_q );
-        wait_for_access += MPI_Wtime() - t0;
+        //wait_for_access += MPI_Wtime() - t0;
         my_offset-=4;
     }
     t0=MPI_Wtime();
     MPI_Win_lock( MPI_LOCK_EXCLUSIVE, target_mpitask_id, 0, win_offs );
     MPI_Put( &my_offset, 1, MPI_INT, target_mpitask_id, 0, 1, MPI_INT, win_offs ); //UNBLOCK OFFSET win (put proper offs val - either changed or not)
     MPI_Win_unlock( target_mpitask_id, win_offs );
-    wait_for_access += MPI_Wtime() - t0;
+    //wait_for_access += MPI_Wtime() - t0;
     return(ret);
 }
 
@@ -90,7 +90,7 @@ int add_element_unsorted(MPI_Win win_q, MPI_Win win_offs, int element[], int mpi
         MPI_Get( &my_offset, 1, MPI_INT, mpitask_id, 0, 1, MPI_INT, win_offs );
         MPI_Put( &lock, 1, MPI_INT, mpitask_id, 0, 1, MPI_INT, win_offs ); //implicitly block OFFSET win on proc <mpitask_id> (block code -2)
         MPI_Win_unlock( mpitask_id, win_offs );
-        wait_for_access += MPI_Wtime() - t0;
+        //wait_for_access += MPI_Wtime() - t0;
         if(my_offset >= -1) //if the window was not locked before
         {
             free = 1;
@@ -107,7 +107,7 @@ int add_element_unsorted(MPI_Win win_q, MPI_Win win_offs, int element[], int mpi
     MPI_Put( &my_offset, 1, MPI_INT, mpitask_id, 0, 1, MPI_INT, win_offs ); //UNBLOCK OFFSET win on proc <mpitask_id> (put proper offs val)
     MPI_Win_unlock( mpitask_id, win_offs );
 
-    wait_for_access += MPI_Wtime() - t0;
+    //wait_for_access += MPI_Wtime() - t0;
 
     return my_offset;
 }
@@ -273,7 +273,7 @@ int main(int argc, char * argv[])
 
     /* echo some info data */
     //sprintf(local_log, "local-log-%06d", rank);
-    gt000 = MPI_Wtime();
+    //gt000 = MPI_Wtime();
 
     //local_log_file = fopen(local_log,"a");
     //fprintf( local_log_file, "[%f] START COMPUTATION \n\n", MPI_Wtime()-gt000);
@@ -282,7 +282,7 @@ int main(int argc, char * argv[])
 
     stime=MPI_Wtime();
 
-    wait_for_access = 0.;
+    //wait_for_access = 0.;
 
     int i;
 
@@ -379,7 +379,7 @@ int main(int argc, char * argv[])
         start++;
         }
         MPI_File_open(MPI_COMM_SELF,"times.csv",(MPI_MODE_WRONLY | MPI_MODE_CREATE),MPI_INFO_NULL,&fh);
-        writecount = sprintf(timefile,"rank;own_q_begin;own_jobs_done;stolen_jobs;time(q_gen);time(own_q_work);time(effective_steal);time(ineffective);total_time;wait_for_access_time");
+        writecount = sprintf(timefile,"rank;own_q_begin;own_jobs_done;stolen_jobs;time(q_gen);time(own_q_work);time(effective_steal);time(ineffective);total_time"); //wait_for_access_time");
         MPI_File_write_at(fh,0,timefile,writecount,MPI_CHAR,MPI_STATUS_IGNORE);
         MPI_File_close(&fh);
 		}
@@ -406,7 +406,7 @@ int main(int argc, char * argv[])
     vec.push_back(stealing_time-effective);
     vec.push_back(counter);
 */
-    writecount = sprintf(timefile,"\n%d;%lf;%lf;%lf;%lf;%lf;%lf;%lf;%lf;%lf",mpitask_id,vec[1],vec[4],vec[8],vec[2],vec[3],vec[6],vec[7],ftime-stime, wait_for_access);
+    writecount = sprintf(timefile,"\n%d;%lf;%lf;%lf;%lf;%lf;%lf;%lf;%lf",mpitask_id,vec[1],vec[4],vec[8],vec[2],vec[3],vec[6],vec[7],ftime-stime); // ;%lf , wait_for_access);
 
     MPI_File_open(MPI_COMM_SELF,"times.csv",(MPI_MODE_WRONLY | MPI_MODE_CREATE),MPI_INFO_NULL,&fh);
 
