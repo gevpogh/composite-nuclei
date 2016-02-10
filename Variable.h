@@ -55,10 +55,7 @@
 #define WRITE_BLOCK_SIZE 100
 #define WINDOW_SIZE 64
 
-/***************************/
-/*** Async progress type ***/
-/*** The var POKE_P_E should be defined ONLY in the case, ***/
-/*** if there is no external asyncronious progress engine ***/
+/***poke progress engine metronomically***/
 #define POKE_P_E 1
 
 
@@ -170,10 +167,8 @@ MPI_Win win_offs;
 int lock=-2;
 
 /* tmp vars for logging */
-//double gt000;
-//double wait_for_access;
-//FILE * local_log_file;
-//char local_log[255];
+double gt000;
+double wait_for_access;
 /* -------------------- */
 
 char newfile[1000];
